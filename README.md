@@ -23,7 +23,7 @@
 - support for GROUP BY and HAVING clauses
 - review & finalize brackets design (of logical operators)
 - allow to prefix columns with table aliases
-- improve aliases to disallow calling basically anything on aliased column/table name
+- improve aliases to disallow calling basically anything on aliased columns/tables
   - e.g. +"col".alias("name").gt("20")
 - better query formatting
 
