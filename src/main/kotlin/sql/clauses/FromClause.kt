@@ -19,7 +19,9 @@ class FromClause : Sqlable {
 
     operator fun String.unaryPlus() = tables.add(this)
 
-    override fun toSql() = "FROM ${tables.joinToString(", ")} ${joins.joinToString(" ") { it.toSql() }}"
+    override fun toSql() = "FROM ${tables.joinToString(", ")}" +
+        "\n" +
+        joins.joinToString("\n") { it.toSql() }
 }
 
 sealed class JoinClause : Sqlable {
@@ -44,15 +46,15 @@ class LeftJoin(override val table: String) : JoinClause() {
 }
 
 class RightJoin(override val table: String) : JoinClause() {
-    override fun toSql() = "RIGHT JOIN ${condition.toSql()}"
+    override fun toSql() = "RIGHT JOIN $table ${condition.toSql()}"
 }
 
 class InnerJoin(override val table: String) : JoinClause() {
-    override fun toSql() = "INNER JOIN ${condition.toSql()}"
+    override fun toSql() = "INNER JOIN $table ${condition.toSql()}"
 }
 
 class FullJoin(override val table: String) : JoinClause() {
-    override fun toSql() = "FULL JOIN ${condition.toSql()}"
+    override fun toSql() = "FULL JOIN $table ${condition.toSql()}"
 }
 
 sealed class JoinCondition : Sqlable
