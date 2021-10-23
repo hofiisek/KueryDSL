@@ -1,9 +1,9 @@
 package sql.operators
 
-import sql.ParameterizedSqlable
+import sql.ParameterizedSqlizable
 import sql.functions.ConditionWithParam
 
-sealed class LogicalOperator : ParameterizedSqlable() {
+sealed class LogicalOperator : ParameterizedSqlizable() {
 
     protected val conditions: MutableList<LogicalOperator> = mutableListOf()
 
@@ -30,6 +30,7 @@ sealed class LogicalOperator : ParameterizedSqlable() {
     operator fun ConditionWithParam.unaryPlus() {
         conditions.add(SimpleOperator(this))
         when (param) {
+            null -> Unit
             is Collection<*> -> params.addAll(param)
             is Array<*> -> params.addAll(param)
             else -> params.add(param)

@@ -25,7 +25,7 @@ class SqlStatement {
 
     val params: List<Any?>
         get() = listOfNotNull(statement, from, where, orderBy, limit, offset)
-            .filterIsInstance<ParameterizedSqlable>()
+            .filterIsInstance<ParameterizedSqlizable>()
             .flatMap { it.params }
 
     fun select(block: SelectStatement.() -> Unit): SelectStatement = SelectStatement()

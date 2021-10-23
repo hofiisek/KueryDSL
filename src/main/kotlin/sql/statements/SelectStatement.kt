@@ -1,15 +1,16 @@
 package sql.statements
 
+import sql.functions.NameWithAlias
+
 /**
  * @author Dominik Hoftych
  */
 class SelectStatement : Statement() {
 
-    private val clauses: MutableList<String> = mutableListOf()
+    private val clauses: MutableList<NameWithAlias> = mutableListOf()
 
-    fun all(): Unit = let { clauses.add("*") }
-
-    operator fun String.unaryPlus() = clauses.add(this)
+    operator fun String.unaryPlus() = clauses.add(NameWithAlias(this))
+    operator fun NameWithAlias.unaryPlus() = clauses.add(this)
 
     override fun toSql() = "SELECT ${clauses.joinToString(separator = ", ")}"
 }
