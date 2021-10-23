@@ -1,10 +1,10 @@
 package sql.clauses
 
-import sql.ParameterizedSqlable
+import sql.ParameterizedSqlizable
 
 /**
  * @author Dominik Hoftych
  */
-class LimitClause(private val limit: Long) : ParameterizedSqlable() {
+class LimitClause(private val limit: Long) : ParameterizedSqlizable() {
     override fun toSql() = "LIMIT ?".also { params.add(limit) }
 }

@@ -1,8 +1,8 @@
 package sql
-
 /**
  * @author Dominik Hoftych
  */
-interface Sqlable {
+interface Sqlizable {
     fun toSql(): String
 }
+

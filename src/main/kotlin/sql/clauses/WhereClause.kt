@@ -1,6 +1,6 @@
 package sql.clauses
 
-import sql.ParameterizedSqlable
+import sql.ParameterizedSqlizable
 import sql.ScopeMarker
 import sql.operators.*
 
@@ -8,7 +8,7 @@ import sql.operators.*
  * @author Dominik Hoftych
  */
 @ScopeMarker
-class WhereClause : ParameterizedSqlable() {
+class WhereClause : ParameterizedSqlizable() {
 
     private val conditions: MutableList<LogicalOperator> = mutableListOf()
 

@@ -1,8 +1,8 @@
 package sql.statements
 
-import sql.ParameterizedSqlable
+import sql.ParameterizedSqlizable
 
 /**
  * @author Dominik Hoftych
  */
-sealed class Statement : ParameterizedSqlable()
+sealed class Statement : ParameterizedSqlizable()

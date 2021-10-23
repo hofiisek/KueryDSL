@@ -1,13 +1,13 @@
 package sql.clauses
 
-import sql.ParameterizedSqlable
+import sql.ParameterizedSqlizable
 
 /**
  * TODO sql injection?
  *
  * @author Dominik Hoftych
  */
-class OrderByClause : ParameterizedSqlable() {
+class OrderByClause : ParameterizedSqlizable() {
 
     private val orderColumns: LinkedHashMap<String, String> = LinkedHashMap()
 

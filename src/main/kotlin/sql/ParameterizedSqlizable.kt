@@ -3,6 +3,6 @@ package sql
 /**
  * @author Dominik Hoftych
  */
-abstract class ParameterizedSqlable : Sqlable {
+abstract class ParameterizedSqlizable : Sqlizable {
     val params: MutableList<Any?> = mutableListOf()
 }
