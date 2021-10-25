@@ -1,18 +1,16 @@
 package sql.clauses
 
 import sql.ParameterizedSqlizable
-import sql.ScopeMarker
 import sql.operators.*
 
 /**
  * @author Dominik Hoftych
  */
-@ScopeMarker
 class WhereClause : ParameterizedSqlizable() {
 
     private val conditions: MutableList<LogicalOperator> = mutableListOf()
 
-    fun and(block: AndOperator.() -> Unit, noBrackets: Boolean = false): AndOperator = AndOperator(noBrackets)
+    fun and(block: AndOperator.() -> Unit, omitBrackets: Boolean = false): AndOperator = AndOperator(omitBrackets)
         .apply(block)
         .also {
             conditions.add(it)

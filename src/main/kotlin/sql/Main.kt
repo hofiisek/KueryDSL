@@ -1,6 +1,10 @@
 package sql
 
-import sql.functions.*
+import sql.functions.alias
+import sql.functions.eq
+import sql.functions.isNotNull
+import sql.functions.isNull
+import sql.operators.OperatorType
 
 /**
  * TODO joins
@@ -17,39 +21,41 @@ import sql.functions.*
  * @author Dominik Hoftych
  */
 fun main() {
+
     val stmt = sqlStatement {
         select {
-            all()
-            +avg("age").alias("avg_age")
-            +"name".alias("name")
+            +"p.name"
+            +"p.age"
+            +"r.first_name".alias("r_first_name")
+            +"r.surname".alias("r_surname")
         }
         from {
-            +"persons"
-//            +"persons".alias("t1")
-//            leftJoin("persons").using("t1")
-//            leftJoin("persons").using("t1", "t2")
-            leftJoin("persons").on {
-                +"t1.id".eq("t2.id")
-                +"t1.id".eq("t2.id")
-                and {
-                    +"t1.id".eq("t2.id")
-                    +"t1.id".eq("t2.id")
-                }
+            +"persons".alias("p")
+            innerJoin(table = "relatives", alias = "r").on {
+                +"r.surname".eq("p.surname")
             }
+            leftJoin(table = "surnames", alias = "s").using("id")
         }
-        where {
-            +"age".`in`("1", "2", "3", "4", "5").not()
-            +"age".isNull()
+        where(rootOperator = OperatorType.OR) {
+//            +"p.age".gt(25)
+            not(rootOperator = OperatorType.OR) {
+                +"age".isNotNull()
+                +"age".isNull()
+            }
+//            or {
+//                +"p.name".eq("Joe")
+//                +"p.name".eq("Josh")
+//                and {
+//                    +"r.first_name".eq("Sheldon")
+//                    +"r.surname".eq("Cooper")
+//                    +"r.age".between(30, 50).not()
+//                    +"r.age".`in`("1", 2, 3)
+//                }
+//            }
         }
-        orderBy {
-            "age".asc()
-            "name".desc()
-        }
-        limit(10)
-        offset(5)
     }
 
     println(stmt.query)
     println()
-    println("params: ${stmt.params}")
+    println("parameters: ${stmt.params}")
 }

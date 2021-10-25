@@ -5,6 +5,6 @@ package sql.functions
  */
 fun String.alias(alias: String) = NameWithAlias(this, alias)
 
-data class NameWithAlias(val name: String, val alias: String = "") {
+data class NameWithAlias(private val name: String, private val alias: String = "") {
     override fun toString() = name + if (alias.isNotBlank()) " AS $alias" else ""
 }
