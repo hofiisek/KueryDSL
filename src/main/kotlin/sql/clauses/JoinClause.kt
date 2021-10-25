@@ -3,7 +3,7 @@ package sql.clauses
 import sql.Sqlizable
 import sql.functions.NameWithAlias
 import sql.operators.AndOperator
-import sql.replacePlaceholders
+import sql.utils.replacePlaceholders
 
 sealed class JoinClause : Sqlizable {
 

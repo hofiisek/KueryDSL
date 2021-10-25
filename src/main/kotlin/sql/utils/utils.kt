@@ -1,4 +1,4 @@
-package sql
+package sql.utils
 
 /**
  * @author Dominik Hoftych

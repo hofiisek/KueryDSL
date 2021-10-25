@@ -1,6 +1,8 @@
-package sql
+package sql.scopes
 
 /**
+ * TODO make this work
+ *
  * @author Dominik Hoftych
  */
 @DslMarker
