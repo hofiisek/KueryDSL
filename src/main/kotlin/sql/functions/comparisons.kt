@@ -1,7 +1,5 @@
 package sql.functions
 
-typealias NamedParam = Pair<String, Any?>
-
 /**
  * @author Dominik Hoftych
  */

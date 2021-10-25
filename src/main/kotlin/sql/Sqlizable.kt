@@ -5,4 +5,3 @@ package sql
 interface Sqlizable {
     fun toSql(): String
 }
-
