@@ -7,25 +7,33 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
 
     protected val conditions: MutableList<LogicalOperator> = mutableListOf()
 
-    fun and(block: AndOperator.() -> Unit): AndOperator = AndOperator().apply(block).also {
+    fun and(block: AndOperator.() -> Unit) = AndOperator().apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun or(block: OrOperator.() -> Unit): OrOperator = OrOperator().apply(block).also {
+    fun or(block: OrOperator.() -> Unit) = OrOperator().apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun not(block: NotOperator.() -> Unit): NotOperator = NotOperator().apply(block).also {
+    fun xor(block: XorOperator.() -> Unit) = XorOperator().apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun xor(block: XorOperator.() -> Unit): XorOperator = XorOperator().apply(block).also {
-        conditions.add(it)
-        params.addAll(it.params)
-    }
+    fun not(rootOperator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = NotOperator()
+        .apply {
+            when (rootOperator) {
+                OperatorType.AND -> and(block)
+                OperatorType.OR -> or(block)
+                OperatorType.XOR -> xor(block)
+                OperatorType.NOT -> throw IllegalArgumentException("NOT operator not supported as root operator")
+            }
+        }.also {
+            conditions.add(it)
+            params.addAll(it.params)
+        }
 
     operator fun ConditionWithParam.unaryPlus() {
         conditions.add(SimpleOperator(this))
@@ -36,22 +44,35 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
             else -> params.add(param)
         }
     }
+
 }
 
 class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
     override fun toSql() = conditionWithParam.condition
 }
 
-class AndOperator(private val noBrackets: Boolean = false) : LogicalOperator() {
+class AndOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
     override fun toSql() = conditions.joinToString(
         separator = " AND ",
-        prefix = "(".takeUnless { noBrackets }.orEmpty(), // TODO do it like this?
-        postfix = ")".takeUnless { noBrackets }.orEmpty()
+        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
+        postfix = ")".takeUnless { omitBrackets }.orEmpty()
     ) { it.toSql() }
 }
 
-class OrOperator : LogicalOperator() {
-    override fun toSql() = conditions.joinToString(separator = " OR ", prefix = "(", postfix = ")") { it.toSql() }
+class OrOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
+    override fun toSql() = conditions.joinToString(
+        separator = " OR ",
+        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
+        postfix = ")".takeUnless { omitBrackets }.orEmpty()
+    ) { it.toSql() } 
+}
+
+class XorOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
+    override fun toSql() = conditions.joinToString(
+        separator = " XOR ",
+        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
+        postfix = ")".takeUnless { omitBrackets }.orEmpty()
+    ) { it.toSql() } 
 }
 
 class NotOperator : LogicalOperator() {
@@ -61,6 +82,6 @@ class NotOperator : LogicalOperator() {
         conditions.joinToString(separator = " AND ", prefix = "NOT (", postfix = ")") { it.toSql() }
 }
 
-class XorOperator : LogicalOperator() {
-    override fun toSql() = conditions.joinToString(separator = " XOR ", prefix = "(", postfix = ")") { it.toSql() }
+enum class OperatorType {
+    AND, OR, XOR, NOT
 }

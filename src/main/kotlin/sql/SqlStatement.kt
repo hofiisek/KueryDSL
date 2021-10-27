@@ -1,15 +1,14 @@
 package sql
 
 import sql.clauses.*
-import sql.operators.AndOperator
-import sql.operators.OrOperator
+import sql.operators.LogicalOperator
+import sql.operators.OperatorType
 import sql.statements.SelectStatement
 import sql.statements.Statement
 
 /**
  * @author Dominik Hoftych
  */
-@ScopeMarker
 class SqlStatement {
 
     private lateinit var statement: Statement
@@ -28,22 +27,23 @@ class SqlStatement {
             .filterIsInstance<ParameterizedSqlizable>()
             .flatMap { it.params }
 
-    fun select(block: SelectStatement.() -> Unit): SelectStatement = SelectStatement()
+    fun select(block: SelectStatement.() -> Unit) = SelectStatement()
         .apply(block)
         .also { statement = it }
-//    fun insert(block: InsertStatement.() -> Unit): InsertStatement = InsertStatement().apply(block).also { statement = it }
-//    fun delete(block: DeleteStatement.() -> Unit): DeleteStatement = DeleteStatement().apply(block).also { statement = it }
-//    fun update(block: UpdateStatement.() -> Unit): UpdateStatement F= UpdateStatement().apply(block).also { statement = it }
 
-    fun from(block: FromClause.() -> Unit): FromClause = FromClause().apply(block).also { from = it }
+    fun from(block: FromClause.() -> Unit) = FromClause().apply(block).also { from = it }
 
-    // TODO return where clause or directly AndOperator??
-    fun where(block: AndOperator.() -> Unit): WhereClause = WhereClause()
-        .apply { and(block, true) }
-        .also { where = it }
-    fun whereOr(block: OrOperator.() -> Unit): WhereClause = WhereClause().apply { or(block) }.also { where = it }
+    fun where(rootOperator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = WhereClause()
+        .apply {
+            when (rootOperator) {
+                OperatorType.AND -> and(block, true)
+                OperatorType.OR -> or(block)
+                OperatorType.XOR -> xor(block)
+                OperatorType.NOT -> throw IllegalArgumentException("NOT operator not supported as root operator")
+            }
+        }.also { where = it }
 
-    fun orderBy(block: OrderByClause.() -> Unit): OrderByClause = OrderByClause().apply(block).also { orderBy = it }
+    fun orderBy(block: OrderByClause.() -> Unit) = OrderByClause().apply(block).also { orderBy = it }
     // TODO group by
     // TODO having
 
