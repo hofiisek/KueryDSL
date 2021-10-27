@@ -1,5 +1,7 @@
 package sql.functions
 
+import sql.utils.placeholders
+
 /**
  * @author Dominik Hoftych
  */
@@ -17,12 +19,10 @@ fun String.isNotNull() = ConditionWithParam("$this IS NOT NULL")
 
 fun String.between(first: Any, second: Any) = ConditionWithParam("$this BETWEEN ? AND ?", listOf(first, second))
 
-fun String.`in`(vararg values: Any) = if (values.isEmpty())
+fun String.`in`(vararg values: Any) = if (values.isNotEmpty())
+    ConditionWithParam("$this IN(${placeholders(values.size)})", values.asList())
+else
     throw IllegalArgumentException("Provide at least 1 value")
-else ConditionWithParam(
-    condition = "$this IN(${List(values.size) { "?" }.joinToString(",")})",
-    param = values.asList()
-)
 
 // TODO or just class with vararg params?
 data class ConditionWithParam(val condition: String, val param: Any? = null)
