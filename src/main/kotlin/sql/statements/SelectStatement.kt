@@ -7,10 +7,12 @@ import sql.functions.NameWithAlias
  */
 class SelectStatement : Statement() {
 
-    private val clauses: MutableList<NameWithAlias> = mutableListOf()
+    private val columns: MutableList<NameWithAlias> = mutableListOf()
 
-    operator fun String.unaryPlus() = clauses.add(NameWithAlias(this))
-    operator fun NameWithAlias.unaryPlus() = clauses.add(this)
+    fun all() = +"*"
 
-    override fun toSql() = "SELECT ${clauses.joinToString(separator = ", ")}"
+    operator fun String.unaryPlus() = columns.add(NameWithAlias(this))
+    operator fun NameWithAlias.unaryPlus() = columns.add(this)
+
+    override fun toSql() = "SELECT ${columns.joinToString(separator = ", ")}"
 }

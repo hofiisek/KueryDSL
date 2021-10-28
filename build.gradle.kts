@@ -42,7 +42,7 @@ tasks {
     test {
         useJUnitPlatform()
 
-        finalizedBy(lintKotlin, detekt)
+        finalizedBy(lintKotlin)
     }
 }
 

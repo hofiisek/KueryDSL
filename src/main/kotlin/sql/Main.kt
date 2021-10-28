@@ -1,22 +1,21 @@
 package sql
 
-import sql.functions.alias
-import sql.functions.eq
-import sql.functions.isNotNull
-import sql.functions.isNull
+import sql.functions.*
 import sql.operators.OperatorType
 
 /**
- * TODO joins
  *
- * TODO finalize first/last brackets design
- * TODO write tests for where query
- * TODO create Aliasable with default empty alias to restrict calling nonsense
- *  operators in select? (restrict calling .gt(..) on +"name".alias("name)")
+ * TODO support table's alias as column prefix, e.g. 'p.name', where 'p' is alias for 'persons' table,
+ *  + check for alias existence
  *
- * TODO better query formatting
+ * TODO implement DISTINCT
  *
- * TODO allow to prefix column with src table's alias?
+ * TODO implement INSERT/DELETE/UPDATE statements
+ *  --> separate clauses (orderby, limit, offset, ..) from SqlStatement to appropriate statement implementations
+ *    - INSERT: INTO, VALUES clauses
+ *    - DELETE: FROM, WHERE, ORDER BY, LIMIT clauses
+ *    - UPDATE: WHERE, ORDER BY, LIMIT clauses
+ *    - SELECT: FROM, WHERE, GROUP BY, HAVING, ORDER BY, LIMIT, OFFSET
  *
  * @author Dominik Hoftych
  */
@@ -36,26 +35,22 @@ fun main() {
             }
             leftJoin(table = "surnames", alias = "s").using("id")
         }
-        where(rootOperator = OperatorType.OR) {
-//            +"p.age".gt(25)
-            not(rootOperator = OperatorType.OR) {
+        where(operator = OperatorType.OR) {
+            and {
+                +"p.age".gt(25)
                 +"age".isNotNull()
                 +"age".isNull()
             }
-//            or {
-//                +"p.name".eq("Joe")
-//                +"p.name".eq("Josh")
-//                and {
-//                    +"r.first_name".eq("Sheldon")
-//                    +"r.surname".eq("Cooper")
-//                    +"r.age".between(30, 50).not()
-//                    +"r.age".`in`("1", 2, 3)
-//                }
-//            }
+            not {
+                or {
+                    +"age".isNotNull()
+                    +"age".isNull()
+                }
+            }
         }
     }
 
-    println(stmt.query)
+    println(stmt.queryFormatted)
     println()
     println("parameters: ${stmt.params}")
 }
