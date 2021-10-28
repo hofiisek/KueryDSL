@@ -35,17 +35,15 @@ fun main() {
             }
             leftJoin(table = "surnames", alias = "s").using("id")
         }
-        where(operator = OperatorType.OR) {
+        where {
             and {
                 +"p.age".gt(25)
                 +"age".isNotNull()
                 +"age".isNull()
             }
-            not {
-                or {
-                    +"age".isNotNull()
-                    +"age".isNull()
-                }
+            not(operator = OperatorType.OR) {
+                +"age".isNotNull()
+                +"age".isNull()
             }
         }
     }

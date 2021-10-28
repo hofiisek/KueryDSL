@@ -19,19 +19,19 @@ class FromClause : Sqlizable {
     operator fun String.unaryPlus() = tables.add(NameWithAlias(this))
     operator fun NameWithAlias.unaryPlus() = tables.add(this)
 
+    override fun toSqlOneliner() = buildString {
+        append("FROM ${tables.joinToString(", ")}")
+        if (joins.isNotEmpty()) {
+            append(" ")
+            append(joins.joinToString(" ") { it.toSqlOneliner() })
+        }
+    }
+
     override fun toSqlFormatted() = buildString {
         append("FROM ${tables.joinToString(", ")}")
         if (joins.isNotEmpty()) {
             append("\n")
             append(joins.joinToString("\n") { it.toSqlFormatted() })
-        }
-    }
-
-    override fun toSqlOneliner() = buildString {
-        append("FROM ${tables.joinToString(", ")}")
-        if (joins.isNotEmpty()) {
-            append(" ")
-            append(joins.joinToString(" ") { it.toSqlFormatted() })
         }
     }
 }
