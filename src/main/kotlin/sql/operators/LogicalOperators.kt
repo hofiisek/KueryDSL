@@ -46,42 +46,38 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
         }
     }
 
+    override fun toSqlOneliner(): String {
+        val separator = when (this) {
+            is AndOperator -> " AND "
+            is OrOperator -> " OR "
+            is XorOperator -> " XOR "
+            is SimpleOperator, is NotOperator -> throw IllegalArgumentException(
+                "Own implementation must be provided for SimpleOperator and NotOperator"
+            )
+        }
+
+        return conditions.joinToString(
+            separator = separator,
+            prefix = "(".takeIf { parent != null }.orEmpty(),
+            postfix = ")".takeIf { parent != null }.orEmpty()
+        ) { it.toSqlOneliner() }
+    }
+
 }
 
-class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
+data class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
     override val parent: LogicalOperator? = null
     override fun toSqlOneliner() = conditionWithParam.condition
 }
 
-class AndOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSqlOneliner() = conditions.joinToString(
-        separator = " AND ",
-        prefix = "(".takeIf { parent != null }.orEmpty(),
-        postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSqlOneliner() }
-}
-
-class OrOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSqlOneliner() = conditions.joinToString(
-        separator = " OR ",
-        prefix = "(".takeIf { parent != null }.orEmpty(),
-        postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSqlFormatted() }
-}
-
-class XorOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSqlOneliner() = conditions.joinToString(
-        separator = " XOR ",
-        prefix = "(".takeIf { parent != null }.orEmpty(),
-        postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSqlFormatted() }
-}
-
-class NotOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
+data class AndOperator(override val parent: LogicalOperator? = null) : LogicalOperator()
+data class OrOperator(override val parent: LogicalOperator? = null) : LogicalOperator()
+data class XorOperator(override val parent: LogicalOperator? = null) : LogicalOperator()
+data class NotOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
     override fun toSqlOneliner() = if (conditions.size == 1)
-        conditions.joinToString(separator = " AND ", prefix = "NOT ") { it.toSqlFormatted() }
+        conditions.joinToString(separator = " AND ", prefix = "NOT ") { it.toSqlOneliner() }
     else
-        conditions.joinToString(separator = " AND ", prefix = "NOT (", postfix = ")") { it.toSqlFormatted() }
+        conditions.joinToString(separator = " AND ", prefix = "NOT (", postfix = ")") { it.toSqlOneliner() }
 }
 
 enum class OperatorType {
