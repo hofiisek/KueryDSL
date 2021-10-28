@@ -18,9 +18,11 @@ class SqlStatement {
     private var limit: LimitClause? = null
     private var offset: OffsetClause? = null
 
-    val query: String
-        get() = listOfNotNull(statement, from, where, orderBy, limit, offset)
-            .joinToString("\n") { it.toSql() }
+    val queryOneliner: String
+        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString(" ") { it.toSql() }
+
+    val queryFormatted: String
+        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString("\n") { it.toSql() }
 
     val params: List<Any?>
         get() = listOfNotNull(statement, from, where, orderBy, limit, offset)
@@ -33,10 +35,10 @@ class SqlStatement {
 
     fun from(block: FromClause.() -> Unit) = FromClause().apply(block).also { from = it }
 
-    fun where(rootOperator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = WhereClause()
+    fun where(operator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = WhereClause()
         .apply {
-            when (rootOperator) {
-                OperatorType.AND -> and(block, true)
+            when (operator) {
+                OperatorType.AND -> and(block)
                 OperatorType.OR -> or(block)
                 OperatorType.XOR -> xor(block)
                 OperatorType.NOT -> throw IllegalArgumentException("NOT operator not supported as root operator")
@@ -50,7 +52,7 @@ class SqlStatement {
     fun limit(limit: Long) = let { this.limit = LimitClause(limit) }
     fun offset(offset: Long) = let { this.offset = OffsetClause(offset) }
 
-    override fun toString() = query
+    override fun toString() = queryFormatted
 }
 
 fun sqlStatement(block: SqlStatement.() -> Unit): SqlStatement = SqlStatement().apply(block)

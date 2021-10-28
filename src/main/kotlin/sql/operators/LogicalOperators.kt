@@ -5,26 +5,27 @@ import sql.functions.ConditionWithParam
 
 sealed class LogicalOperator : ParameterizedSqlizable() {
 
+    abstract val parent: LogicalOperator?
     protected val conditions: MutableList<LogicalOperator> = mutableListOf()
 
-    fun and(block: AndOperator.() -> Unit) = AndOperator().apply(block).also {
+    fun and(block: AndOperator.() -> Unit) = AndOperator(parent = this).apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun or(block: OrOperator.() -> Unit) = OrOperator().apply(block).also {
+    fun or(block: OrOperator.() -> Unit) = OrOperator(parent = this).apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun xor(block: XorOperator.() -> Unit) = XorOperator().apply(block).also {
+    fun xor(block: XorOperator.() -> Unit) = XorOperator(parent = this).apply(block).also {
         conditions.add(it)
         params.addAll(it.params)
     }
 
-    fun not(rootOperator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = NotOperator()
+    fun not(operator: OperatorType = OperatorType.AND, block: LogicalOperator.() -> Unit) = NotOperator(parent = this)
         .apply {
-            when (rootOperator) {
+            when (operator) {
                 OperatorType.AND -> and(block)
                 OperatorType.OR -> or(block)
                 OperatorType.XOR -> xor(block)
@@ -48,34 +49,35 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
 }
 
 class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
+    override val parent: LogicalOperator? = null
     override fun toSql() = conditionWithParam.condition
 }
 
-class AndOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
+class AndOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
     override fun toSql() = conditions.joinToString(
         separator = " AND ",
-        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
-        postfix = ")".takeUnless { omitBrackets }.orEmpty()
+        prefix = "(".takeIf { parent != null }.orEmpty(),
+        postfix = ")".takeIf { parent != null }.orEmpty()
     ) { it.toSql() }
 }
 
-class OrOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
+class OrOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
     override fun toSql() = conditions.joinToString(
         separator = " OR ",
-        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
-        postfix = ")".takeUnless { omitBrackets }.orEmpty()
-    ) { it.toSql() } 
+        prefix = "(".takeIf { parent != null }.orEmpty(),
+        postfix = ")".takeIf { parent != null }.orEmpty()
+    ) { it.toSql() }
 }
 
-class XorOperator(private val omitBrackets: Boolean = false) : LogicalOperator() {
+class XorOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
     override fun toSql() = conditions.joinToString(
         separator = " XOR ",
-        prefix = "(".takeUnless { omitBrackets }.orEmpty(),
-        postfix = ")".takeUnless { omitBrackets }.orEmpty()
+        prefix = "(".takeIf { parent != null }.orEmpty(),
+        postfix = ")".takeIf { parent != null }.orEmpty()
     ) { it.toSql() } 
 }
 
-class NotOperator : LogicalOperator() {
+class NotOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
     override fun toSql() = if (conditions.size == 1)
         conditions.joinToString(separator = " AND ", prefix = "NOT ") { it.toSql() }
     else

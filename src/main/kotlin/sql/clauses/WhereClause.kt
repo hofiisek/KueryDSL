@@ -10,7 +10,7 @@ class WhereClause : ParameterizedSqlizable() {
 
     private val conditions: MutableList<LogicalOperator> = mutableListOf()
 
-    fun and(block: AndOperator.() -> Unit, omitBrackets: Boolean = false): AndOperator = AndOperator(omitBrackets)
+    fun and(block: AndOperator.() -> Unit): AndOperator = AndOperator()
         .apply(block)
         .also {
             conditions.add(it)
