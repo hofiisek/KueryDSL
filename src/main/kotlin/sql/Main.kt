@@ -50,6 +50,8 @@ fun main() {
         }
     }
 
+    println(stmt.queryOneliner)
+    println()
     println(stmt.queryFormatted)
     println()
     println("parameters: ${stmt.params}")

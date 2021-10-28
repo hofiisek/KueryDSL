@@ -14,5 +14,5 @@ class SelectStatement : Statement() {
     operator fun String.unaryPlus() = columns.add(NameWithAlias(this))
     operator fun NameWithAlias.unaryPlus() = columns.add(this)
 
-    override fun toSql() = "SELECT ${columns.joinToString(separator = ", ")}"
+    override fun toSqlOneliner() = "SELECT ${columns.joinToString(separator = ", ")}"
 }

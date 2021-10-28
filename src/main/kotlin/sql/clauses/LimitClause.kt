@@ -6,5 +6,5 @@ import sql.ParameterizedSqlizable
  * @author Dominik Hoftych
  */
 class LimitClause(private val limit: Long) : ParameterizedSqlizable() {
-    override fun toSql() = "LIMIT ?".also { params.add(limit) }
+    override fun toSqlOneliner() = "LIMIT ?".also { params.add(limit) }
 }

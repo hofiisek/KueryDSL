@@ -32,5 +32,5 @@ class WhereClause : ParameterizedSqlizable() {
         params.addAll(it.params)
     }
 
-    override fun toSql(): String = "WHERE ${conditions.joinToString(separator = " AND ") { it.toSql() }}"
+    override fun toSqlOneliner(): String = "WHERE ${conditions.joinToString(separator = " AND ") { it.toSqlOneliner() }}"
 }

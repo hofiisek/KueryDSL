@@ -87,14 +87,14 @@ internal class SelectStatementTest : StringSpec({
         stmt.params shouldBe expectedParams
     }
 
-    "select query - AND, OR, =, >=, <= operators" {
+    "select query - AND, OR, =, !=, >=, <= operators" {
         val expectedQuery = "SELECT name, age, AVG(age) AS avg_age FROM persons WHERE" +
-            " name = ? AND age >= ? OR avg_age <= ?"
+            " name = ? AND age >= ? AND (name != ? OR avg_age <= ?)"
 
         val name = "joe"
         val age = 20
         val avgAge = "25"
-        val expectedParams = listOf(name, age, avgAge)
+        val expectedParams = listOf(name, age, name, avgAge)
 
         val stmt = sqlStatement {
             select {
@@ -109,6 +109,7 @@ internal class SelectStatementTest : StringSpec({
                 +"name".eq(name)
                 +"age".gte(age)
                 or {
+                    +"name".neq(name)
                     +"avg_age".lte(avgAge)
                 }
             }

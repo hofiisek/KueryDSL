@@ -19,10 +19,10 @@ class SqlStatement {
     private var offset: OffsetClause? = null
 
     val queryOneliner: String
-        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString(" ") { it.toSql() }
+        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString(" ") { it.toSqlOneliner() }
 
     val queryFormatted: String
-        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString("\n") { it.toSql() }
+        get() = listOfNotNull(statement, from, where, orderBy, limit, offset).joinToString("\n") { it.toSqlFormatted() }
 
     val params: List<Any?>
         get() = listOfNotNull(statement, from, where, orderBy, limit, offset)

@@ -3,5 +3,6 @@ package sql
  * @author Dominik Hoftych
  */
 interface Sqlizable {
-    fun toSql(): String
+    fun toSqlFormatted(): String = toSqlOneliner()
+    fun toSqlOneliner(): String
 }

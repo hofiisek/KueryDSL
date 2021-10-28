@@ -50,38 +50,38 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
 
 class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
     override val parent: LogicalOperator? = null
-    override fun toSql() = conditionWithParam.condition
+    override fun toSqlOneliner() = conditionWithParam.condition
 }
 
 class AndOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSql() = conditions.joinToString(
+    override fun toSqlOneliner() = conditions.joinToString(
         separator = " AND ",
         prefix = "(".takeIf { parent != null }.orEmpty(),
         postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSql() }
+    ) { it.toSqlOneliner() }
 }
 
 class OrOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSql() = conditions.joinToString(
+    override fun toSqlOneliner() = conditions.joinToString(
         separator = " OR ",
         prefix = "(".takeIf { parent != null }.orEmpty(),
         postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSql() }
+    ) { it.toSqlFormatted() }
 }
 
 class XorOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSql() = conditions.joinToString(
+    override fun toSqlOneliner() = conditions.joinToString(
         separator = " XOR ",
         prefix = "(".takeIf { parent != null }.orEmpty(),
         postfix = ")".takeIf { parent != null }.orEmpty()
-    ) { it.toSql() } 
+    ) { it.toSqlFormatted() }
 }
 
 class NotOperator(override val parent: LogicalOperator? = null) : LogicalOperator() {
-    override fun toSql() = if (conditions.size == 1)
-        conditions.joinToString(separator = " AND ", prefix = "NOT ") { it.toSql() }
+    override fun toSqlOneliner() = if (conditions.size == 1)
+        conditions.joinToString(separator = " AND ", prefix = "NOT ") { it.toSqlFormatted() }
     else
-        conditions.joinToString(separator = " AND ", prefix = "NOT (", postfix = ")") { it.toSql() }
+        conditions.joinToString(separator = " AND ", prefix = "NOT (", postfix = ")") { it.toSqlFormatted() }
 }
 
 enum class OperatorType {
