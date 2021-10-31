@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import sql.functions.*
 import sql.operators.OperatorType
-import sql.sqlStatement
+import sql.select
 
 /**
  * @author Dominik Hoftych
@@ -13,50 +13,45 @@ internal class SelectStatementTest : StringSpec({
 
     "simple select query test" {
         val expected = "SELECT age, name AS name FROM persons"
-        val stmt = sqlStatement {
-            select {
-                +"age"
-                +"name".alias("name")
-                from {
-                    +"persons"
-                }
+        val stmt = select {
+            +"age"
+            +"name".alias("name")
+            from {
+                +"persons"
             }
         }
 
-        stmt.queryOneliner shouldBe expected
+        stmt.toSqlOneliner() shouldBe expected
     }
 
     "select query with aliases and aggregate functions test" {
         val expected = "SELECT age, name AS name, COUNT(*) AS cnt, AVG(age) AS avg_age FROM persons"
-        val stmt = sqlStatement {
-            select {
-                +"age"
-                +"name".alias("name")
-                +count().alias("cnt")
-                +avg("age").alias("avg_age")
-                from {
-                    +"persons"
-                }
+        val stmt = select {
+            +"age"
+            +"name".alias("name")
+            +count().alias("cnt")
+            +avg("age").alias("avg_age")
+            from {
+                +"persons"
             }
         }
 
-        stmt.queryOneliner shouldBe expected
+        stmt.toSqlOneliner() shouldBe expected
     }
 
     "select from multiple tables test (implicit join)" {
         val expected = "SELECT * FROM persons, relatives, profile_pictures AS pictures"
-        val stmt = sqlStatement {
-            select {
-                all()
-                from {
-                    +"persons"
-                    +"relatives"
-                    +"profile_pictures".alias("pictures")
-                }
+        val stmt = select {
+            +"*"
+            from {
+                +"persons"
+                +"relatives"
+                +"profile_pictures".alias("pictures")
             }
         }
 
-        stmt.queryOneliner shouldBe expected
+
+        stmt.toSqlOneliner() shouldBe expected
     }
 
     "simple select query test with AND operators" {
@@ -68,12 +63,10 @@ internal class SelectStatementTest : StringSpec({
         val avgAge = "25"
         val expectedParams = listOf(name, age, avgAge)
 
-        val stmt = sqlStatement {
-            select {
-                +"name"
-                +"age"
-                +avg("age").alias("avg_age")
-            }
+        val stmt = select {
+            +"name"
+            +"age"
+            +avg("age").alias("avg_age")
             from {
                 +"persons"
             }
@@ -83,8 +76,9 @@ internal class SelectStatementTest : StringSpec({
                 +"avg_age".eq(avgAge)
             }
         }
+        
 
-        stmt.queryOneliner shouldBe expectedQuery
+        stmt.toSqlOneliner() shouldBe expectedQuery
         stmt.params shouldBe expectedParams
     }
 
@@ -97,12 +91,10 @@ internal class SelectStatementTest : StringSpec({
         val avgAge = "25"
         val expectedParams = listOf(age, name, avgAge)
 
-        val stmt = sqlStatement {
-            select {
-                +"name"
-                +"age"
-                +avg("age").alias("avg_age")
-            }
+        val stmt = select {
+            +"name"
+            +"age"
+            +avg("age").alias("avg_age")
             from {
                 +"persons"
             }
@@ -115,7 +107,7 @@ internal class SelectStatementTest : StringSpec({
             }
         }
 
-        stmt.queryOneliner shouldBe expectedQuery
+        stmt.toSqlOneliner() shouldBe expectedQuery
         stmt.params shouldBe expectedParams
     }
 
@@ -128,12 +120,10 @@ internal class SelectStatementTest : StringSpec({
         val avgAge = "25"
         val expectedParams = listOf(age, name, avgAge)
 
-        val stmt = sqlStatement {
-            select {
-                +"name"
-                +"age"
-                +avg("age").alias("avg_age")
-            }
+        val stmt = select {
+            +"name"
+            +"age"
+            +avg("age").alias("avg_age")
             from {
                 +"persons"
             }
@@ -144,7 +134,7 @@ internal class SelectStatementTest : StringSpec({
             }
         }
 
-        stmt.queryOneliner shouldBe expectedQuery
+        stmt.toSqlOneliner() shouldBe expectedQuery
         stmt.params shouldBe expectedParams
     }
 
@@ -159,11 +149,9 @@ internal class SelectStatementTest : StringSpec({
         val otherAge = 25
         val expectedParams = listOf(age, name, name, age, name, otherName, age, otherAge)
 
-        val stmt = sqlStatement {
-            select {
-                +"name"
-                +"age"
-            }
+        val stmt = select {
+            +"name"
+            +"age"
             from {
                 +"persons"
             }
@@ -185,7 +173,7 @@ internal class SelectStatementTest : StringSpec({
             }
         }
 
-        stmt.queryOneliner shouldBe expectedQuery
+        stmt.toSqlOneliner() shouldBe expectedQuery
         stmt.params shouldBe expectedParams
     }
 })
