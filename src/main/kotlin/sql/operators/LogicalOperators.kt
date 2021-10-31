@@ -1,7 +1,10 @@
 package sql.operators
 
 import sql.ParameterizedSqlizable
-import sql.functions.ConditionWithParam
+import sql.functions.Condition
+import sql.functions.MultiParamCondition
+import sql.functions.NoParamCondition
+import sql.functions.SingleParamCondition
 
 sealed class LogicalOperator : ParameterizedSqlizable() {
 
@@ -36,13 +39,12 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
             params.addAll(it.params)
         }
 
-    operator fun ConditionWithParam.unaryPlus() {
+    operator fun Condition.unaryPlus() {
         conditions.add(SimpleOperator(this))
-        when (param) {
-            null -> Unit
-            is Collection<*> -> params.addAll(param)
-            is Array<*> -> params.addAll(param)
-            else -> params.add(param)
+        when (this) {
+            is SingleParamCondition -> params.add(param)
+            is MultiParamCondition -> this@LogicalOperator.params.addAll(params)
+            is NoParamCondition -> Unit
         }
     }
 
@@ -65,9 +67,9 @@ sealed class LogicalOperator : ParameterizedSqlizable() {
 
 }
 
-data class SimpleOperator(private val conditionWithParam: ConditionWithParam) : LogicalOperator() {
+data class SimpleOperator(private val condition: Condition) : LogicalOperator() {
     override val parent: LogicalOperator? = null
-    override fun toSqlOneliner() = conditionWithParam.condition
+    override fun toSqlOneliner() = condition.condition
 }
 
 data class AndOperator(override val parent: LogicalOperator? = null) : LogicalOperator()
