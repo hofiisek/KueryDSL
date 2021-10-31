@@ -4,11 +4,8 @@ import sql.functions.*
 import sql.operators.OperatorType
 
 /**
- *
- * TODO support table's alias as column prefix, e.g. 'p.name', where 'p' is alias for 'persons' table,
- *  + check for alias existence
- *
- * TODO implement DISTINCT
+ * TODO nested selects
+ * TODO DISTINCT, incl. in functions such as COUNT
  *
  * TODO implement INSERT/DELETE/UPDATE statements
  *  --> separate clauses (orderby, limit, offset, ..) from SqlStatement to appropriate statement implementations
@@ -21,13 +18,12 @@ import sql.operators.OperatorType
  */
 fun main() {
 
-    val stmt = sqlStatement {
-        select {
-            +"p.name"
-            +"p.age"
-            +"r.first_name".alias("r_first_name")
-            +"r.surname".alias("r_surname")
-        }
+    val stmt = select(distinct = true) {
+        +"age".withTable("p").alias("page")
+
+        +"r.first_name".alias("r_first_name")
+        +"r.surname".alias("r_surname")
+
         from {
             +"persons".alias("p")
             innerJoin(table = "relatives", alias = "r").on {
@@ -35,6 +31,7 @@ fun main() {
             }
             leftJoin(table = "surnames", alias = "s").using("id")
         }
+
         where {
             and {
                 +"p.age".gt(25)
@@ -48,9 +45,9 @@ fun main() {
         }
     }
 
-    println(stmt.queryOneliner)
+    println(stmt.toSqlOneliner())
     println()
-    println(stmt.queryFormatted)
+    println(stmt.toSqlFormatted())
     println()
     println("parameters: ${stmt.params}")
 }
