@@ -1,10 +1,10 @@
-package sql.operators
+package kuery.operators
 
-import sql.ParameterizedSqlizable
-import sql.functions.Condition
-import sql.functions.MultiParamCondition
-import sql.functions.NoParamCondition
-import sql.functions.SingleParamCondition
+import kuery.ParameterizedSqlizable
+import kuery.functions.Condition
+import kuery.functions.MultiParamCondition
+import kuery.functions.NoParamCondition
+import kuery.functions.SingleParamCondition
 
 sealed class LogicalOperator : ParameterizedSqlizable() {
 

@@ -1,4 +1,4 @@
-package sql.clauses
+package kuery.clauses
 
 /**
  * @author Dominik Hoftych

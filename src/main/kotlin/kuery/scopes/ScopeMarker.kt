@@ -1,4 +1,4 @@
-package sql.scopes
+package kuery.scopes
 
 /**
  * TODO make this work

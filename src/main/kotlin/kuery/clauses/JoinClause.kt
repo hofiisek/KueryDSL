@@ -1,9 +1,9 @@
-package sql.clauses
+package kuery.clauses
 
-import sql.Sqlizable
-import sql.functions.NameWithAlias
-import sql.operators.AndOperator
-import sql.utils.replacePlaceholders
+import kuery.Sqlizable
+import kuery.functions.NameWithAlias
+import kuery.operators.AndOperator
+import kuery.utils.replacePlaceholders
 
 sealed class JoinClause : Sqlizable {
 

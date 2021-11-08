@@ -1,6 +1,6 @@
-package sql.functions
+package kuery.functions
 
-import sql.utils.placeholders
+import kuery.utils.placeholders
 
 /**
  * @author Dominik Hoftych

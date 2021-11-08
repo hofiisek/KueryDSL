@@ -1,6 +1,6 @@
-package sql.clauses
+package kuery.clauses
 
-import sql.ParameterizedSqlizable
+import kuery.ParameterizedSqlizable
 
 /**
  * @author Dominik Hoftych

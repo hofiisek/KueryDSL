@@ -1,1 +1,1 @@
-rootProject.name = "SqlDSL"
+rootProject.name = "KueryDSL"

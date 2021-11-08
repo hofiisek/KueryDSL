@@ -1,6 +1,6 @@
-package sql.statements
+package kuery.statements
 
-import sql.Sqlizable
+import kuery.Sqlizable
 
 /**
  * @author Dominik Hoftych

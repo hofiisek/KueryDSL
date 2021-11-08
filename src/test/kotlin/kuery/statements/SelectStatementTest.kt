@@ -1,10 +1,10 @@
-package sql.statements
+package kuery.statements
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import sql.functions.*
-import sql.operators.OperatorType
-import sql.select
+import kuery.functions.*
+import kuery.operators.OperatorType
+import kuery.select
 
 /**
  * @author Dominik Hoftych

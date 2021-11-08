@@ -1,7 +1,7 @@
-package sql.clauses
+package kuery.clauses
 
-import sql.ParameterizedSqlizable
-import sql.operators.*
+import kuery.ParameterizedSqlizable
+import kuery.operators.*
 
 /**
  * @author Dominik Hoftych

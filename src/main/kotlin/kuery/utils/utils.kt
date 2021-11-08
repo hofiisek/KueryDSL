@@ -1,4 +1,4 @@
-package sql.utils
+package kuery.utils
 
 /**
  * @author Dominik Hoftych

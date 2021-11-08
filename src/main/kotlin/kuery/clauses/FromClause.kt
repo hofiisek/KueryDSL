@@ -1,7 +1,7 @@
-package sql.clauses
+package kuery.clauses
 
-import sql.Sqlizable
-import sql.functions.NameWithAlias
+import kuery.Sqlizable
+import kuery.functions.NameWithAlias
 
 /**
  * @author Dominik Hoftych

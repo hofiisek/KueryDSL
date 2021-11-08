@@ -1,4 +1,4 @@
-package sql.functions
+package kuery.functions
 
 sealed class Condition {
     abstract val condition: String

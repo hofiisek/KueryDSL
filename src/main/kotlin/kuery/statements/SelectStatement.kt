@@ -1,10 +1,10 @@
-package sql.statements
+package kuery.statements
 
-import sql.ParameterizedSqlizable
-import sql.clauses.*
-import sql.functions.NameWithAlias
-import sql.operators.LogicalOperator
-import sql.operators.OperatorType
+import kuery.ParameterizedSqlizable
+import kuery.clauses.*
+import kuery.functions.NameWithAlias
+import kuery.operators.LogicalOperator
+import kuery.operators.OperatorType
 
 /**
  * @author Dominik Hoftych

@@ -1,7 +1,7 @@
-package sql
+package kuery
 
-import sql.functions.*
-import sql.operators.OperatorType
+import kuery.functions.*
+import kuery.operators.OperatorType
 
 /**
  * TODO nested selects

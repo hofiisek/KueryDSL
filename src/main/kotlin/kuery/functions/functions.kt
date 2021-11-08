@@ -1,4 +1,4 @@
-package sql.functions
+package kuery.functions
 
 fun count(column: String = "*") = "COUNT($column)"
 
